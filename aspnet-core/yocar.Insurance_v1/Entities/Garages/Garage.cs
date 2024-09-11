@@ -17,8 +17,7 @@ namespace yocar.Insurance_v1.Entities.Garages
         public virtual Guid InsuranceCompanyId { get; set; }
 
         public virtual InsuranceCompany InsuranceCompany { get; set; }
-        public virtual Guid? BrandId { get; set; } // Optional foreign key
-        public virtual Brand? Brand { get; set; } // Optional navigation property
+        public virtual ICollection<Brand> Brands { get; set; } = new HashSet<Brand>();
         protected GarageBase() { }
 
         public GarageBase(Guid id, string name, string address, Guid insuranceCompanyId)

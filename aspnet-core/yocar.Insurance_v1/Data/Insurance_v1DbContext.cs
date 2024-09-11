@@ -123,24 +123,32 @@ public class Insurance_v1DbContext : AbpDbContext<Insurance_v1DbContext>
         {
             b.ToTable("Garages");
             b.HasKey(g => g.Id);
+
             b.Property(g => g.Name)
              .IsRequired()
              .HasMaxLength(255);
+
             b.Property(g => g.Address)
              .IsRequired()
              .HasMaxLength(500);
+
             b.Property(g => g.InsuranceCompanyId)
              .IsRequired();
-            b.HasOne<InsuranceCompany>()
+
+            b.HasOne(g => g.InsuranceCompany)
              .WithMany(ic => ic.Garages)
              .HasForeignKey(g => g.InsuranceCompanyId);
-            b.Property(g => g.BrandId)
-             .IsRequired(false); // Optional foreign key
-            b.HasOne<Brand>()
+
+            
+            b.HasMany(g => g.Brands)
              .WithMany(b => b.Garages)
-             .HasForeignKey(g => g.BrandId)
-             .IsRequired(false); // Optional navigation
+             .UsingEntity<Dictionary<string, object>>(
+                 "GarageBrand",
+                 j => j.HasOne<Brand>().WithMany().HasForeignKey("BrandId"),
+                 j => j.HasOne<Garage>().WithMany().HasForeignKey("GarageId")
+             );
         });
+
 
 
         // ContactPerson Configuration

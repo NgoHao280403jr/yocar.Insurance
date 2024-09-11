@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace yocar.Insurance_v1.Migrations
 {
     /// <inheritdoc />
-    public partial class Added_Insurance : Migration
+    public partial class YocarInsurance : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -126,57 +126,52 @@ namespace yocar.Insurance_v1.Migrations
                     DeletionTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     Address = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    InsuranceCompanyId = table.Column<Guid>(type: "uuid", nullable: false),
-                    InsuranceCompanyId1 = table.Column<Guid>(type: "uuid", nullable: false),
-                    BrandId = table.Column<Guid>(type: "uuid", nullable: true),
-                    BrandId1 = table.Column<Guid>(type: "uuid", nullable: true)
+                    InsuranceCompanyId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Garages", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Garages_Brands_BrandId",
-                        column: x => x.BrandId,
-                        principalTable: "Brands",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Garages_Brands_BrandId1",
-                        column: x => x.BrandId1,
-                        principalTable: "Brands",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Garages_InsuranceCompanies_InsuranceCompanyId",
                         column: x => x.InsuranceCompanyId,
                         principalTable: "InsuranceCompanies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GarageBrand",
+                columns: table => new
+                {
+                    BrandId = table.Column<Guid>(type: "uuid", nullable: false),
+                    GarageId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GarageBrand", x => new { x.BrandId, x.GarageId });
                     table.ForeignKey(
-                        name: "FK_Garages_InsuranceCompanies_InsuranceCompanyId1",
-                        column: x => x.InsuranceCompanyId1,
-                        principalTable: "InsuranceCompanies",
+                        name: "FK_GarageBrand_Brands_BrandId",
+                        column: x => x.BrandId,
+                        principalTable: "Brands",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GarageBrand_Garages_GarageId",
+                        column: x => x.GarageId,
+                        principalTable: "Garages",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Garages_BrandId",
-                table: "Garages",
-                column: "BrandId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Garages_BrandId1",
-                table: "Garages",
-                column: "BrandId1");
+                name: "IX_GarageBrand_GarageId",
+                table: "GarageBrand",
+                column: "GarageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Garages_InsuranceCompanyId",
                 table: "Garages",
                 column: "InsuranceCompanyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Garages_InsuranceCompanyId1",
-                table: "Garages",
-                column: "InsuranceCompanyId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Locations_WardId",
@@ -191,13 +186,16 @@ namespace yocar.Insurance_v1.Migrations
                 name: "ContactPeople");
 
             migrationBuilder.DropTable(
-                name: "Garages");
+                name: "GarageBrand");
 
             migrationBuilder.DropTable(
                 name: "Locations");
 
             migrationBuilder.DropTable(
                 name: "Brands");
+
+            migrationBuilder.DropTable(
+                name: "Garages");
 
             migrationBuilder.DropTable(
                 name: "InsuranceCompanies");

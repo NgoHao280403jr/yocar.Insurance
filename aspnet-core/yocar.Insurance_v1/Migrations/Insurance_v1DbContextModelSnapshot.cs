@@ -24,6 +24,21 @@ namespace yocar.Insurance_v1.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("GarageBrand", b =>
+                {
+                    b.Property<Guid>("BrandId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("GarageId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("BrandId", "GarageId");
+
+                    b.HasIndex("GarageId");
+
+                    b.ToTable("GarageBrand");
+                });
+
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1984,12 +1999,6 @@ namespace yocar.Insurance_v1.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<Guid?>("BrandId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("BrandId1")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .IsRequired()
@@ -2021,9 +2030,6 @@ namespace yocar.Insurance_v1.Migrations
                     b.Property<Guid>("InsuranceCompanyId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("InsuranceCompanyId1")
-                        .HasColumnType("uuid");
-
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
@@ -2045,13 +2051,7 @@ namespace yocar.Insurance_v1.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BrandId");
-
-                    b.HasIndex("BrandId1");
-
                     b.HasIndex("InsuranceCompanyId");
-
-                    b.HasIndex("InsuranceCompanyId1");
 
                     b.ToTable("Garages", (string)null);
                 });
@@ -2325,6 +2325,21 @@ namespace yocar.Insurance_v1.Migrations
                     b.ToTable("Wards", (string)null);
                 });
 
+            modelBuilder.Entity("GarageBrand", b =>
+                {
+                    b.HasOne("yocar.Insurance_v1.Entities.Brands.Brand", null)
+                        .WithMany()
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("yocar.Insurance_v1.Entities.Garages.Garage", null)
+                        .WithMany()
+                        .HasForeignKey("GarageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>
                 {
                     b.HasOne("Volo.Abp.AuditLogging.AuditLog", null)
@@ -2478,27 +2493,11 @@ namespace yocar.Insurance_v1.Migrations
 
             modelBuilder.Entity("yocar.Insurance_v1.Entities.Garages.Garage", b =>
                 {
-                    b.HasOne("yocar.Insurance_v1.Entities.Brands.Brand", null)
-                        .WithMany("Garages")
-                        .HasForeignKey("BrandId");
-
-                    b.HasOne("yocar.Insurance_v1.Entities.Brands.Brand", "Brand")
-                        .WithMany()
-                        .HasForeignKey("BrandId1");
-
-                    b.HasOne("yocar.Insurance_v1.Entities.InsuranceCompanies.InsuranceCompany", null)
+                    b.HasOne("yocar.Insurance_v1.Entities.InsuranceCompanies.InsuranceCompany", "InsuranceCompany")
                         .WithMany("Garages")
                         .HasForeignKey("InsuranceCompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("yocar.Insurance_v1.Entities.InsuranceCompanies.InsuranceCompany", "InsuranceCompany")
-                        .WithMany()
-                        .HasForeignKey("InsuranceCompanyId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Brand");
 
                     b.Navigation("InsuranceCompany");
                 });
@@ -2559,11 +2558,6 @@ namespace yocar.Insurance_v1.Migrations
             modelBuilder.Entity("Volo.Abp.TenantManagement.Tenant", b =>
                 {
                     b.Navigation("ConnectionStrings");
-                });
-
-            modelBuilder.Entity("yocar.Insurance_v1.Entities.Brands.Brand", b =>
-                {
-                    b.Navigation("Garages");
                 });
 
             modelBuilder.Entity("yocar.Insurance_v1.Entities.InsuranceCompanies.InsuranceCompany", b =>
